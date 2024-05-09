@@ -951,8 +951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ecda9987e75dc4d961f163832c4e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  pos: {x: 0, y: 0, z: 0}
+  target: {fileID: 1374586926}
 --- !u!1 &526836923
 GameObject:
   m_ObjectHideFlags: 0
@@ -1741,9 +1740,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  dashSpeed: 5
+  dashSpeed: 3
   dashTime: 0.1
-  dashCooldown: 1.3
+  dashCooldown: 1
 --- !u!50 &1374586923
 Rigidbody2D:
   serializedVersion: 4
@@ -1911,7 +1910,7 @@ Animator:
   m_GameObject: {fileID: 1374586921}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8047517132584794ea2262cddd25b701, type: 2}
+  m_Controller: {fileID: 9100000, guid: 312496b25d842af4a938e96c7d5aaee0, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
-        anim.SetBool("Walking", rb.velocity.x != 0 && Grounded());
+        anim.SetBool("Run", rb.velocity.x != 0 && Grounded());
     }
 
     void StartDash()
@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
     {
         canDash = false;
         pState.dashing = true;
-        anim.SetTrigger("Dashing");
+        anim.SetTrigger("Dash");
         rb.gravityScale = 0;
         rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0);
         //if (Grounded()) Instantiate(dashEffect, transform);
