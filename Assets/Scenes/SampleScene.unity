@@ -1731,8 +1731,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 7
-  jumpForce: 12
-  jumpBufferFrames: 1
+  jumpForce: 15
+  jumpBufferFrames: 15
   coyoteTime: 0.1
   maxAirJumps: 1
   groundCheckPoint: {fileID: 1265624816}
@@ -1818,7 +1818,7 @@ BoxCollider2D:
   m_Offset: {x: -0.07620411, y: -0.043128945}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.40966466, y: 0.5080955}
     oldSize: {x: 0.69, y: 0.44}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -1913,6 +1913,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumping: 0
   dashing: 0
+  running: 0
+  attacking: 0
 --- !u!95 &1374586928
 Animator:
   serializedVersion: 5

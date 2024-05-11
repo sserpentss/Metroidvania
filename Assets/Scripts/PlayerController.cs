@@ -116,11 +116,13 @@ public class PlayerController : MonoBehaviour
         UpdateJumpVariables();
 
         if (pState.dashing) return;
+
         Flip();
         Move();
         Jump();
         StartDash();
         Attack();
+
     }
 
     void GetInputs()
@@ -144,9 +146,14 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-
+        //pState.attacking = false;
+        Debug.Log($"State runing: {pState.running} State attacking: {pState.attacking}");
+        if (pState.attacking && !pState.running) return;
+        if (Input.GetButton("Horizontal") && Grounded()) pState.running = true;
+        Debug.Log(pState.running);
         rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
         anim.SetBool("Run", rb.velocity.x != 0 && Grounded());
+        //pState.running = false;
     }
 
     void StartDash()
@@ -180,12 +187,21 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
-
+        
         timeSinceAttack += Time.deltaTime;
         if (attack && timeSinceAttack >= timeBetweenAttack)
         {
+
             timeSinceAttack = 0;
+            //if(Input.GetMouseButtonDown(0)) rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
             anim.SetTrigger("Attack");
+            /*if (Input.GetButton("Horizontal") && Grounded())
+            {
+                pState.running = true;
+                pState.attacking = false;
+                return;
+            }*/
 
             if (yAxis == 0 || yAxis < 0 && Grounded())
             {
@@ -200,11 +216,17 @@ public class PlayerController : MonoBehaviour
                 Hit(DownAttackTransform, DownAttackArea);
             }
         }
-        pState.attacking = false;
+        if (attack && timeSinceAttack == 0)
+        {
+            pState.attacking = false;
+
+        }
     }
 
     void Hit(Transform _attackTransform, Vector2 _attackArea)
     {
+        pState.attacking = true;
+        pState.running = false;
         Collider2D[] objectsToHit = Physics2D.OverlapBoxAll(_attackTransform.position, _attackArea, 0, attackableLayer);
     }
 
@@ -229,28 +251,29 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
             {
-                rb.velocity = new Vector3(rb.velocity.x, jumpForce);
-
                 pState.jumping = true;
-            }
-            else if (!Grounded() && airJumpCounter < maxAirJumps && Input.GetButtonDown("Jump"))
-            {
-                pState.jumping = true;
-
-                airJumpCounter++;
-
                 rb.velocity = new Vector3(rb.velocity.x, jumpForce);
+                
             }
+            
+            //pState.jumping = true;
+        }
+        if (!Grounded() && airJumpCounter < maxAirJumps && Input.GetButtonDown("Jump"))
+        {
+            airJumpCounter++;
+            pState.jumping = true;
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce);
         }
 
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
+        /*if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0);
 
             pState.jumping = false;
-        }
+        }*/
 
         anim.SetBool("Jumping", !Grounded());
+        //pState.jumping = false;
     }
 
     void UpdateJumpVariables()
