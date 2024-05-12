@@ -1732,7 +1732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 7
   jumpForce: 15
-  jumpBufferFrames: 15
+  jumpBufferFrames: 7
   coyoteTime: 0.1
   maxAirJumps: 1
   groundCheckPoint: {fileID: 1265624816}
@@ -1740,7 +1740,7 @@ MonoBehaviour:
   groundCheckX: 0.5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   dashSpeed: 3
   dashTime: 0.1
   dashCooldown: 1
@@ -1772,7 +1772,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 4
-  m_Material: {fileID: 6200000, guid: cd9d40c293dae6a4390b44ec7cfffd03, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1818,7 +1818,7 @@ BoxCollider2D:
   m_Offset: {x: -0.07620411, y: -0.043128945}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.40966466, y: 0.5080955}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.69, y: 0.44}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -1889,7 +1889,7 @@ Transform:
   m_GameObject: {fileID: 1374586921}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.81, y: 0.09, z: 0}
+  m_LocalPosition: {x: -4.5, y: 0.02, z: 0}
   m_LocalScale: {x: 9, y: 9, z: 9}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3048,11 +3048,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3251580739365679462, guid: 047ca53a84151ce4596f5119d5d7aeaf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.81
+      value: -4.5
       objectReference: {fileID: 0}
     - target: {fileID: 3251580739365679462, guid: 047ca53a84151ce4596f5119d5d7aeaf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.09
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 3251580739365679462, guid: 047ca53a84151ce4596f5119d5d7aeaf, type: 3}
       propertyPath: m_LocalPosition.z

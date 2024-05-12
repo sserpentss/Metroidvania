@@ -116,13 +116,12 @@ public class PlayerController : MonoBehaviour
         UpdateJumpVariables();
 
         if (pState.dashing) return;
-
         Flip();
         Move();
         Jump();
         StartDash();
         Attack();
-
+        
     }
 
     void GetInputs()
@@ -146,14 +145,15 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        //pState.attacking = false;
-        Debug.Log($"State runing: {pState.running} State attacking: {pState.attacking}");
-        if (pState.attacking && !pState.running) return;
-        if (Input.GetButton("Horizontal") && Grounded()) pState.running = true;
-        Debug.Log(pState.running);
-        rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
-        anim.SetBool("Run", rb.velocity.x != 0 && Grounded());
-        //pState.running = false;
+       
+        if (!pState.attacking && pState.dashing == false)
+        {
+            rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
+            anim.SetBool("Run", rb.velocity.x != 0 && Grounded());
+            if (Input.GetButtonDown("Horizontal")) pState.running = true;
+        }  
+        if(Input.GetButtonUp("Horizontal")) pState.running = false;
+
     }
 
     void StartDash()
@@ -174,6 +174,7 @@ public class PlayerController : MonoBehaviour
     {
         canDash = false;
         pState.dashing = true;
+        //pState.running = false;
         anim.SetTrigger("Dash");
         rb.gravityScale = 0;
         rb.velocity = new Vector2(transform.localScale.x * dashSpeed, 0);
@@ -187,21 +188,14 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
-        
+
         timeSinceAttack += Time.deltaTime;
         if (attack && timeSinceAttack >= timeBetweenAttack)
         {
-
+            pState.attacking = true;
+            pState.running = false;
             timeSinceAttack = 0;
-            //if(Input.GetMouseButtonDown(0)) rb.constraints = RigidbodyConstraints2D.FreezePosition;
-
             anim.SetTrigger("Attack");
-            /*if (Input.GetButton("Horizontal") && Grounded())
-            {
-                pState.running = true;
-                pState.attacking = false;
-                return;
-            }*/
 
             if (yAxis == 0 || yAxis < 0 && Grounded())
             {
@@ -215,18 +209,13 @@ public class PlayerController : MonoBehaviour
             {
                 Hit(DownAttackTransform, DownAttackArea);
             }
+            
         }
-        if (attack && timeSinceAttack == 0)
-        {
-            pState.attacking = false;
-
-        }
+        if(timeSinceAttack > 1.2f) pState.attacking = false;
     }
 
     void Hit(Transform _attackTransform, Vector2 _attackArea)
     {
-        pState.attacking = true;
-        pState.running = false;
         Collider2D[] objectsToHit = Physics2D.OverlapBoxAll(_attackTransform.position, _attackArea, 0, attackableLayer);
     }
 
@@ -236,6 +225,7 @@ public class PlayerController : MonoBehaviour
             || Physics2D.Raycast(groundCheckPoint.position + new Vector3(groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround)
             || Physics2D.Raycast(groundCheckPoint.position + new Vector3(-groundCheckX, 0, 0), Vector2.down, groundCheckY, whatIsGround))
         {
+            pState.jumping = false;
             return true;
         }
         else
@@ -251,29 +241,35 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
             {
-                pState.jumping = true;
                 rb.velocity = new Vector3(rb.velocity.x, jumpForce);
-                
+                //pState.running = false;
+                pState.jumping = true;
             }
             
-            //pState.jumping = true;
         }
         if (!Grounded() && airJumpCounter < maxAirJumps && Input.GetButtonDown("Jump"))
         {
-            airJumpCounter++;
+            //pState.running = false;
             pState.jumping = true;
+
+            airJumpCounter++;
+
             rb.velocity = new Vector3(rb.velocity.x, jumpForce);
         }
 
-        /*if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
+        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0)
         {
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-
-            pState.jumping = false;
-        }*/
+            rb.velocity = new Vector2(rb.velocity.x, jumpBufferFrames);
+            pState.jumping = true;
+            //pState.running = false;
+        }
 
         anim.SetBool("Jumping", !Grounded());
-        //pState.jumping = false;
+    }
+
+    IEnumerator WaitAttack()
+    {
+        yield return new WaitForSeconds(1f);
     }
 
     void UpdateJumpVariables()
