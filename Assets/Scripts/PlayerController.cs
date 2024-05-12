@@ -48,19 +48,24 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("Attack Settings:")]
-    [SerializeField] private Transform SideAttackTransform; //the middle of the side attack area
-    [SerializeField] private Vector2 SideAttackArea; //how large the area of side attack is
+    //[SerializeField] private Transform SideAttackTransform; //the middle of the side attack area
+    //[SerializeField] private Vector2 SideAttackArea; //how large the area of side attack is
 
-    [SerializeField] private Transform UpAttackTransform; //the middle of the up attack area
-    [SerializeField] private Vector2 UpAttackArea; //how large the area of side attack is
+    //[SerializeField] private Transform UpAttackTransform; //the middle of the up attack area
+    //[SerializeField] private Vector2 UpAttackArea; //how large the area of side attack is
 
-    [SerializeField] private Transform DownAttackTransform; //the middle of the down attack area
-    [SerializeField] private Vector2 DownAttackArea; //how large the area of down attack is
+    //[SerializeField] private Transform DownAttackTransform; //the middle of the down attack area
+    //[SerializeField] private Vector2 DownAttackArea; //how large the area of down attack is
 
     [SerializeField] private LayerMask attackableLayer; //the layer the player can attack and recoil off of
 
     [SerializeField] private float timeBetweenAttack;
     private float timeSinceAttack;
+
+    [SerializeField] private float damage = 1;
+    [SerializeField] private float hitForce = 10f;
+
+    [SerializeField] private Transform attackPoligon;
     [Space(5)]
 
     private PlayerStateList pState;
@@ -101,13 +106,13 @@ public class PlayerController : MonoBehaviour
         gravity = rb.gravityScale;
     }
 
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(SideAttackTransform.position, SideAttackArea);
         Gizmos.DrawWireCube(UpAttackTransform.position, UpAttackArea);
         Gizmos.DrawWireCube(DownAttackTransform.position, DownAttackArea);
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -188,7 +193,7 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
-
+        //Collider2D attackPoligonCollider = attackPoligon.GetComponent<Collider2D>();
         timeSinceAttack += Time.deltaTime;
         if (attack && timeSinceAttack >= timeBetweenAttack)
         {
@@ -197,7 +202,7 @@ public class PlayerController : MonoBehaviour
             timeSinceAttack = 0;
             anim.SetTrigger("Attack");
 
-            if (yAxis == 0 || yAxis < 0 && Grounded())
+            /*if (yAxis == 0 || yAxis < 0 && Grounded())
             {
                 Hit(SideAttackTransform, SideAttackArea);
             }
@@ -208,15 +213,37 @@ public class PlayerController : MonoBehaviour
             else if (yAxis < 0 && !Grounded())
             {
                 Hit(DownAttackTransform, DownAttackArea);
-            }
+            }*/
             
         }
-        if(timeSinceAttack > 1.2f) pState.attacking = false;
+        if(timeSinceAttack > 0.8f) pState.attacking = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Enemy e = collision.gameObject.GetComponent<Enemy>();
+            e.EnemyHit(damage, (transform.position - e.transform.position).normalized, hitForce);
+            return;
+        }
     }
 
     void Hit(Transform _attackTransform, Vector2 _attackArea)
     {
         Collider2D[] objectsToHit = Physics2D.OverlapBoxAll(_attackTransform.position, _attackArea, 0, attackableLayer);
+        List<Enemy> hitEnemies = new List<Enemy>();
+
+        for(int i = 0; i < objectsToHit.Length; i++)
+        {
+            Enemy e = objectsToHit[i].GetComponent<Enemy>();
+            if (e && !hitEnemies.Contains(e))
+            {
+                e.EnemyHit(damage, (transform.position - objectsToHit[i].transform.position).normalized, hitForce);
+                hitEnemies.Add(e);
+            }
+        }
+    
     }
 
     public bool Grounded()
@@ -267,10 +294,6 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("Jumping", !Grounded());
     }
 
-    IEnumerator WaitAttack()
-    {
-        yield return new WaitForSeconds(1f);
-    }
 
     void UpdateJumpVariables()
     {
