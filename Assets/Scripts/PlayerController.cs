@@ -61,11 +61,16 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float timeBetweenAttack;
     private float timeSinceAttack;
-
+    private float attackAnimTime = 0.6f;
     [SerializeField] private float damage = 1;
     [SerializeField] private float hitForce = 10f;
 
     [SerializeField] private Transform attackPoligon;
+    [Space(5)]
+
+    [Header("Recoil Settings:")]
+    [SerializeField] private float recoilXSpeed = 100; //the speed of horizontal recoil
+    [SerializeField] private float recoilYSpeed = 100; //the speed of vertical recoil
     [Space(5)]
 
     private PlayerStateList pState;
@@ -141,10 +146,12 @@ public class PlayerController : MonoBehaviour
         if (xAxis < 0)
         {
             transform.localScale = new Vector2(-9, transform.localScale.y);
+            pState.lookingRight = false;
         }
         else if (xAxis > 0)
         {
             transform.localScale = new Vector2(9, transform.localScale.y);
+            pState.lookingRight = true;
         }
     }
 
@@ -200,8 +207,9 @@ public class PlayerController : MonoBehaviour
             pState.attacking = true;
             pState.running = false;
             timeSinceAttack = 0;
+            attackAnimTime = 0;
             anim.SetTrigger("Attack");
-
+            Debug.Log("Attack1 ");
             /*if (yAxis == 0 || yAxis < 0 && Grounded())
             {
                 Hit(SideAttackTransform, SideAttackArea);
@@ -214,9 +222,20 @@ public class PlayerController : MonoBehaviour
             {
                 Hit(DownAttackTransform, DownAttackArea);
             }*/
-            
+
+        }
+        if(attack && timeSinceAttack < timeBetweenAttack && timeSinceAttack > 0.1) {
+            WaitAnimation();
+            anim.SetTrigger("Attack2");
+
+            Debug.Log("Attack2 " + timeSinceAttack);
         }
         if(timeSinceAttack > 0.8f) pState.attacking = false;
+    }
+
+    IEnumerable WaitAnimation()
+    {
+        yield return new WaitForSeconds(8/10);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -225,6 +244,8 @@ public class PlayerController : MonoBehaviour
         {
             Enemy e = collision.gameObject.GetComponent<Enemy>();
             e.EnemyHit(damage, (transform.position - e.transform.position).normalized, hitForce);
+            if(pState.lookingRight) rb.velocity = new Vector2(5f, rb.velocity.y);
+            else rb.velocity = new Vector2(-5f, rb.velocity.y);
             return;
         }
     }
@@ -244,6 +265,40 @@ public class PlayerController : MonoBehaviour
             }
         }
     
+    }
+
+    void Recoil()
+    {
+        if (pState.recoilingX)
+        {
+            if (pState.lookingRight)
+            {
+                rb.velocity = new Vector2(-recoilXSpeed, 0);
+            }
+            else
+            {
+                rb.velocity = new Vector2(recoilXSpeed, 0);
+            }
+        }
+
+        if (pState.recoilingY)
+        {
+            rb.gravityScale = 0;
+            if (yAxis < 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, recoilYSpeed);
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -recoilYSpeed);
+            }
+            airJumpCounter = 0;
+        }
+        else
+        {
+            rb.gravityScale = gravity;
+        }
+
     }
 
     public bool Grounded()
