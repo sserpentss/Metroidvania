@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(health);
+        //Debug.Log(health);
         if (health <= 0)
         {
             timeSinceAttack += Time.deltaTime;

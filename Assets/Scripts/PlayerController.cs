@@ -81,6 +81,8 @@ public class PlayerController : MonoBehaviour
     private float xAxis, yAxis;
     private bool attack = false;
 
+    private Time timeUpdate = new Time();
+
 
     //creates a singleton of the PlayerController
     public static PlayerController Instance;
@@ -122,6 +124,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+
+        // Запуск таймера
+        stopwatch.Start();
+
+
         GetInputs();
         UpdateJumpVariables();
 
@@ -131,7 +139,13 @@ public class PlayerController : MonoBehaviour
         Jump();
         StartDash();
         Attack();
-        
+
+        stopwatch.Stop();
+
+        // Получение времени выполнения в миллисекундах
+        double elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+
+        Debug.Log(elapsedMilliseconds);
     }
 
     void GetInputs()
@@ -145,12 +159,12 @@ public class PlayerController : MonoBehaviour
     {
         if (xAxis < 0)
         {
-            transform.localScale = new Vector2(-9, transform.localScale.y);
+            transform.localScale = new Vector2(-1, transform.localScale.y);
             pState.lookingRight = false;
         }
         else if (xAxis > 0)
         {
-            transform.localScale = new Vector2(9, transform.localScale.y);
+            transform.localScale = new Vector2(1, transform.localScale.y);
             pState.lookingRight = true;
         }
     }
@@ -209,7 +223,7 @@ public class PlayerController : MonoBehaviour
             timeSinceAttack = 0;
             attackAnimTime = 0;
             anim.SetTrigger("Attack");
-            Debug.Log("Attack1 ");
+            //Debug.Log("Attack1 ");
             /*if (yAxis == 0 || yAxis < 0 && Grounded())
             {
                 Hit(SideAttackTransform, SideAttackArea);
@@ -228,7 +242,7 @@ public class PlayerController : MonoBehaviour
             WaitAnimation();
             anim.SetTrigger("Attack2");
 
-            Debug.Log("Attack2 " + timeSinceAttack);
+            //Debug.Log("Attack2 " + timeSinceAttack);
         }
         if(timeSinceAttack > 0.8f) pState.attacking = false;
     }
