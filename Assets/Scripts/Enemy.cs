@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] float recoilLength;
     [SerializeField] float recoilFactor;
     [SerializeField] bool isRecoiling = false;
+    [SerializeField] Collider2D body;
 
     float recoilTimer;
     Rigidbody2D rb;
@@ -58,6 +59,14 @@ public class Enemy : MonoBehaviour
         {
             rb.AddForce(-_hitForce * recoilFactor * _hitDirection);
             isRecoiling = true;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Player")
+        {
+            Debug.Log("xyu");
         }
     }
 }
